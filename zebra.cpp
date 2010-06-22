@@ -4,7 +4,7 @@
 #include <vector>
 using namespace std;
 
-void printTable(vector<int> t[5][5])
+void printTbl(vector<int> t[5][5]) //print the table with all the possibilities
 {
     int d,e,f;
     for(d = 0; d < 5; d++)
@@ -19,6 +19,33 @@ void printTable(vector<int> t[5][5])
         }
         printf("\n");
     }
+}
+
+void reduceSpot(vector<int> t[5][5], int r, int c) //use the axioms to reduce the possibilites in a spot, based on the given state
+{
+    //code the contrapositives
+
+}
+
+void reduceTbl(vector<int> t[5][5])
+{
+    //use axioms to reduce possibilities in table
+}
+
+int constrainedRow(vector<int> t[5][5]) //return the row of the most constrained cell
+{
+}
+
+int constrainedCol(vector<int> t[5][5]) //return the col of the most constrained cell
+{
+}
+
+int noSolution(vector<int> t[5][5]) //returns 0 if there is a cell with 0 possibilities, 1 otherwise
+{
+}
+
+int solve(vector<int> t[5][5], int r, int c) //solve the puzzle
+{
 }
 
 int main()
@@ -44,8 +71,7 @@ int main()
             }
         }
     }
-
-    printTable(table);
+    printTbl(table);
 
     return 0;
 }
