@@ -84,6 +84,29 @@ void chooseOpt(vector<int> t[5][5], int r, int c, int opt)
 
 }
 
+void forceOpt(vector<int> t[5][5], int r, int c, int opt)
+{
+    int i;
+    int size = t[r][c].size();
+    for(i=0; i<size; i++)
+    {
+        t[r][c].pop_back();
+    }
+    t[r][c].push_back(opt);
+
+    //remove option from all other cells
+    int a; int b;
+    for(a=0; a<5; a++)
+    {
+        for(b=0; b<5; b++)
+        {
+            if(a != r && b!= c)
+            {
+                removeOpt(t, a, b, opt);
+            }
+        }
+    }
+}
 
 void reduceSpot(vector<int> t[5][5], int r, int c) //use the axioms to reduce the possibilites in a spot, based on the given state
 {
@@ -690,7 +713,7 @@ int constrainedRow(vector<int> t[5][5]) //return the row of the most constrained
     {
         for(e=0; e<5; e++)
         {
-           if(t[d][e].size() < min)
+           if(t[d][e].size() < min && t[d][e].size() > 1)
             {
                 min = t[d][e].size();
                 row = d;
@@ -709,7 +732,7 @@ int constrainedCol(vector<int> t[5][5]) //return the col of the most constrained
     {
         for(e=0; e<5; e++)
         {
-           if(t[d][e].size() < min)
+           if(t[d][e].size() < min && t[d][e].size() > 1)
             {
                 min = t[d][e].size();
                 col = e;
@@ -728,11 +751,11 @@ int noSolution(vector<int> t[5][5]) //returns 0 if there is a cell with 0 possib
         {
            if(t[d][e].size() == 0)
             {
-                return 0;
+                return 1;
             }
         }
     }
-    return 1;
+    return 0;
 }
 
 int solution(vector<int> t[5][5]) // returns 1 if the solution is found, ie all the cells have one option
@@ -755,14 +778,17 @@ int solution(vector<int> t[5][5]) // returns 1 if the solution is found, ie all 
 
 int solve(vector<int> t[5][5], int r, int c) //solve the puzzle
 {
-    if(noSolution(t)) {return 0;}
+    if(noSolution(t)) {return 0;} //break if no solution or if the board has not changed
 
     if(solution(t)) {return 1;}
 
     int a;
     for(a = 0; a< t[r][c].size(); a++)
        {
-        chooseOpt(t, r, c, a);
+        //problem is here, the other options get removed..and the options are available
+        chooseOpt(t, r, c, t[r][c][a]);
+
+        //need to store possible values, and iterate through them...(choose opt should do it automatically)
         reduceTbl(t);
         if(solve(t, constrainedRow(t), constrainedCol(t)))
         {
@@ -771,6 +797,55 @@ int solve(vector<int> t[5][5], int r, int c) //solve the puzzle
         }
        }
     return 0;
+}
+
+void printNat(vector<int> t[5][5], int b)
+{
+    if(t[1][b][0] == 1)
+    {
+        printf("Norwegian");
+    }
+    else if(t[1][b][0] == 2)
+    {
+        printf("Ukranian");
+    }
+    else if(t[1][b][0] == 3)
+    {
+        printf("English");
+    }
+    else if(t[1][b][0] == 4)
+    {
+        printf("Spanish");
+    }
+    else if(t[1][b][0] == 5)
+    {
+        printf("Japanese");
+    }
+
+}
+
+void printSol(vector<int> t[5][5])
+{
+    int a; int b;
+    int z; int w;
+    for(a=0; a<5; a++)
+    {
+        for(b=0; b<5; b++)
+        {
+            if(t[4][b][0] == 5)
+            {
+               z = b;
+            }
+            if(t[2][b][0] == 2)
+            {
+                w =b;
+            }
+        }
+    }
+    printf("The owner of the zebra is: ");
+    printNat(t, z);
+    printf("\nThe man who drinks the water is: ");
+    printNat(t, w);
 }
 
 int main()
@@ -798,14 +873,16 @@ int main()
     }
     chooseOpt(table, 2, 2, 3);
     chooseOpt(table, 0, 1, 2);
+    chooseOpt(table, 1, 0, 1);
 
-    //test
-   // chooseOpt(table, 0, 4, 5);
-    reduceTbl(table);
-
-    //print test
+    printf("Initial Table");
     printTbl(table);
+    printf("\n");
 
+    solve(table, constrainedRow(table), constrainedCol(table));
+    printf("\n");
+
+    printSol(table);
 
     return 0;
 }
