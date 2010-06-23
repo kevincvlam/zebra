@@ -34,18 +34,96 @@ void reduceTbl(vector<int> t[5][5])
 
 int constrainedRow(vector<int> t[5][5]) //return the row of the most constrained cell
 {
+    int d,e;
+    int min = t[0][0].size();
+    int row = 0;
+    for(d = 0; d < 5; d++)
+    {
+        for(e=0; e<5; e++)
+        {
+           if(t[d][e].size() < min)
+            {
+                min = t[d][e].size();
+                row = d;
+            }
+        }
+    }
+    return row;
 }
 
 int constrainedCol(vector<int> t[5][5]) //return the col of the most constrained cell
 {
+    int d,e;
+    int min = t[0][0].size();
+    int col = 0;
+    for(d = 0; d < 5; d++)
+    {
+        for(e=0; e<5; e++)
+        {
+           if(t[d][e].size() < min)
+            {
+                min = t[d][e].size();
+                col = e;
+            }
+        }
+    }
+    return col;
 }
 
 int noSolution(vector<int> t[5][5]) //returns 0 if there is a cell with 0 possibilities, 1 otherwise
 {
+    int d,e;
+    for(d = 0; d < 5; d++)
+    {
+        for(e=0; e<5; e++)
+        {
+           if(t[d][e].size() == 0)
+            {
+                return 0;
+            }
+        }
+    }
+    return 1;
+}
+
+int solution(vector<int> t[5][5]) // returns 1 if the solution is found, ie all the cells have one option
+{
+    return 1;
+}
+
+void chooseOpt(vector<int> t[5][5], int r, int c, int opt)
+{
+    int i;
+    int size = t[r][c].size();
+    for(i=0; i<size; i++)
+    {
+        t[r][c].pop_back();
+    }
+    t[r][c].push_back(opt);
 }
 
 int solve(vector<int> t[5][5], int r, int c) //solve the puzzle
 {
+    if(noSolution(t)) {return 0;}
+
+    if(solution(t)) {return 1;}
+
+    /*
+    for all possibilties of each cell
+
+        erase all but that option
+        reducetbl();
+
+        if(solve(reducedtbl), constrainedRow(table), constrainedCol(table))
+        {
+        print tbl;
+        return 1;
+        }
+    end for
+
+    return 0;
+
+    */
 }
 
 int main()
@@ -72,6 +150,7 @@ int main()
         }
     }
     printTbl(table);
+
 
     return 0;
 }
