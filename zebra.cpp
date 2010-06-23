@@ -6,6 +6,8 @@ using namespace std;
 
 void printTbl(vector<int> t[5][5]) //print the table with all the possibilities
 {
+
+    printf("-1-|-2-|-3-|-4-|-5-|\n");
     int d,e,f;
     for(d = 0; d < 5; d++)
     {
@@ -21,15 +23,167 @@ void printTbl(vector<int> t[5][5]) //print the table with all the possibilities
     }
 }
 
+void removeOpt(vector<int> t[5][5], int r, int c, int opt) //remove a possibility from the given cell
+{
+  int a; int index;
+
+  for(a=0; a< t[r][c].size(); a++)
+  {
+      if(t[r][c][a] == opt)
+      index = a;
+  }
+  t[r][c].erase(t[r][c].begin()+index);
+}
+
+int cellContains(vector<int> t[5][5], int r, int c, int opt) //if cell contains a possibility, return 1
+{
+    int a;
+    for(a=0; a<t[r][c].size(); a++)
+    {
+        if(t[r][c][a] == opt)
+        return 1;
+    }
+    return 0;
+}
+
 void reduceSpot(vector<int> t[5][5], int r, int c) //use the axioms to reduce the possibilites in a spot, based on the given state
 {
     //code the contrapositives
 
+  //color row
+  if(r == 0)
+  {
+    //if the house is not red, the nationality cannot be english
+    if(!cellContains(t, r, c, 3))
+    {
+        removeOpt(t, 1, c, 3);
+    }
+
+    //not green, not coffee
+    if(!cellContains(t, r, c, 5))
+    {
+        removeOpt(t, 2, c, 5);
+    }
+
+    //not yellow, no kools
+    if(!cellContains(t, r, c, 1))
+    {
+        removeOpt(t, 3, c, 1);
+    }
+  }
+
+  //nationality row
+  if(r == 1)
+  {
+      //if the nationality is not english, the house cannot be red
+      if(!cellContains(t, r, c, 3))
+      {
+          removeOpt(t, 0, c, 3);
+      }
+
+      //if not spaniard, no dog
+      if(!cellContains(t, r, c, 4))
+      {
+          removeOpt(t, 4, c, 4);
+      }
+
+      //not ukrainian, not tea
+      if(!cellContains(t, r, c, 2))
+      {
+          removeOpt(t, 2, c, 2);
+      }
+
+      //norwegian lives in the first house
+      if(c != 0)
+      {
+          removeOpt(t, r, c, 1);
+      }
+
+      //not japanese, not parliaments
+      if(!cellContains(t,r,c, 5))
+      {
+          removeOpt(t, 3, c, 5);
+      }
+  }
+
+  //drink row
+  if(r==2)
+  {
+    //not green, not coffee
+    if(!cellContains(t, r, c, 5))
+    {
+        removeOpt(t, 0, c, 5);
+    }
+
+    //not tea, not ukrainian
+    if(!cellContains(t,r,c,2))
+    {
+        removeOpt(t, 1, c, 2);
+    }
+
+    //if not the middle house, no milk
+    if(c != 2)
+    {
+        removeOpt(t, r, c, 3);
+    }
+
+    //not oj, not lucky strike
+    if(!cellContains(t, r, c, 4))
+    {
+        removeOpt(t, 3, c, 4);
+    }
+  }
+
+  //smoke row
+  if(r==3)
+  {
+      //not old gold, not snails
+      if(!cellContains(t, r, c, 3))
+      {
+          removeOpt(t, 4,  c, 3);
+      }
+
+      //not kools not yellow
+      if(!cellContains(t, r, c, 1))
+      {
+          removeOpt(t, 0, c, 1);
+      }
+
+      //not lucky strike, not oj
+      if(!cellContains(t, r, c, 4))
+      {
+          removeOpt(t, 2, c, 4);
+      }
+
+      //not parliaments not japanese
+      if(!cellContains(t, r, c, 5))
+      {
+          removeOpt(t, 1, c, 5);
+      }
+  }
+
+  //pet row
+  if(r==4)
+  {
+      //if not dog, not spaniard
+      if(!cellContains(t, r, c, 4))
+      {
+          removeOpt(t, 1, c, 4);
+      }
+
+      //not snails, not old gold
+      if(!cellContains(t, r, c, 3))
+      {
+          removeOpt(t, 3, c, 3);
+      }
+  }
+
+  //if col is in a certain range, check neighbour nonsense on borders do proper things
 }
 
 void reduceTbl(vector<int> t[5][5])
 {
-    //use axioms to reduce possibilities in table
+    //use axioms to reduce possibilities in table, keep track of boundaries, prevent segfaults
 }
 
 int constrainedRow(vector<int> t[5][5]) //return the row of the most constrained cell
@@ -160,6 +314,10 @@ int main()
             }
         }
     }
+
+    removeOpt(table, 3,4, 5);
+    reduceSpot(table, 3,4);
+
     printTbl(table);
 
 
