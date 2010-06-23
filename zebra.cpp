@@ -34,6 +34,13 @@ int cellContains(vector<int> t[5][5], int r, int c, int opt) //if cell contains 
     return 0;
 }
 
+int cellContainsOnly(vector<int> t[5][5], int r, int c, int opt) //if cell contains a possibility, return 1
+{
+    if( t[r][c].size() == 1 && t[r][c][0] == opt)
+        return 1;
+    return 0;
+}
+
 void chooseOpt(vector<int> t[5][5], int r, int c, int opt)
 {
     if(cellContains(t, r, c, opt))
@@ -45,19 +52,25 @@ void chooseOpt(vector<int> t[5][5], int r, int c, int opt)
         t[r][c].pop_back();
     }
     t[r][c].push_back(opt);
+
+    //remove option from all other cells
+
     }
+
 }
 
 void removeOpt(vector<int> t[5][5], int r, int c, int opt) //remove a possibility from the given cell
 {
   int a; int index;
-
+  if(cellContains(t, r, c, opt))
+  {
   for(a=0; a< t[r][c].size(); a++)
   {
       if(t[r][c][a] == opt)
       index = a;
   }
   t[r][c].erase(t[r][c].begin()+index);
+  }
 }
 
 
@@ -399,14 +412,24 @@ void reduceSpot(vector<int> t[5][5], int r, int c) //use the axioms to reduce th
 
 //code the logical positives, ie. chooosing
 
-  //if house is red choose eng
+
 
   if(r==0) //color
   {
+      //if house is red choose eng
+      if(cellContainsOnly(t, r, c,3))
+      {
+          chooseOpt(t, 1, c, 3);
+      }
   }
 
   if(r==1) //nat
   {
+      //if eng, red
+      if(cellContainsOnly(t, r, c,3))
+      {
+          chooseOpt(t, 0, c, 3);
+      }
   }
 
   if(r==2) //drink
