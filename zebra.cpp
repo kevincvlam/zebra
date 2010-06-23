@@ -88,6 +88,17 @@ int noSolution(vector<int> t[5][5]) //returns 0 if there is a cell with 0 possib
 
 int solution(vector<int> t[5][5]) // returns 1 if the solution is found, ie all the cells have one option
 {
+    int d,e;
+    for(d = 0; d < 5; d++)
+    {
+        for(e=0; e<5; e++)
+        {
+           if(t[d][e].size() != 1)
+            {
+                return 0;
+            }
+        }
+    }
     return 1;
 }
 
