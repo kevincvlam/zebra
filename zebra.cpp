@@ -23,6 +23,31 @@ void printTbl(vector<int> t[5][5]) //print the table with all the possibilities
     }
 }
 
+int cellContains(vector<int> t[5][5], int r, int c, int opt) //if cell contains a possibility, return 1
+{
+    int a;
+    for(a=0; a<t[r][c].size(); a++)
+    {
+        if(t[r][c][a] == opt)
+        return 1;
+    }
+    return 0;
+}
+
+void chooseOpt(vector<int> t[5][5], int r, int c, int opt)
+{
+    if(cellContains(t, r, c, opt))
+    {
+    int i;
+    int size = t[r][c].size();
+    for(i=0; i<size; i++)
+    {
+        t[r][c].pop_back();
+    }
+    t[r][c].push_back(opt);
+    }
+}
+
 void removeOpt(vector<int> t[5][5], int r, int c, int opt) //remove a possibility from the given cell
 {
   int a; int index;
@@ -35,21 +60,11 @@ void removeOpt(vector<int> t[5][5], int r, int c, int opt) //remove a possibilit
   t[r][c].erase(t[r][c].begin()+index);
 }
 
-int cellContains(vector<int> t[5][5], int r, int c, int opt) //if cell contains a possibility, return 1
-{
-    int a;
-    for(a=0; a<t[r][c].size(); a++)
-    {
-        if(t[r][c][a] == opt)
-        return 1;
-    }
-    return 0;
-}
+
 
 void reduceSpot(vector<int> t[5][5], int r, int c) //use the axioms to reduce the possibilites in a spot, based on the given state
 {
     //code the contrapositives
-
   //color row
   if(r == 0)
   {
@@ -179,11 +194,246 @@ void reduceSpot(vector<int> t[5][5], int r, int c) //use the axioms to reduce th
   }
 
   //if col is in a certain range, check neighbour nonsense on borders do proper things
+  //neighbour axioms
+
+  //boundaries
+  if(c == 0)
+  {
+
+      if(r == 1 && c == 0)
+      {
+          chooseOpt(t, 1, 0, 1);
+      }
+      //since no house is left of the first house, it cannot be to the right of the ivory
+      if(r == 0)
+      {
+          removeOpt(t, r, c, 5);
+      }
+
+
+      //if the house to the right isn't blue, not norwegian
+      if(r==1)
+      {
+          if(!cellContains(t, 0, c+1, 2))
+          {
+              removeOpt(t, r, c, 1);
+          }
+      }
+
+      //if the house to the right isn't norwegian, not blue
+      if(r==0)
+      {
+          if(!cellContains(t, 1, c+1, 1))
+          {
+              removeOpt(t, r, c, 2);
+          }
+      }
+
+
+      //if the house to the right does not have fox no chesterfields
+      if(r == 3)
+      {
+          if(!cellContains(t, 4, c+1, 1))
+          {
+              removeOpt(t, r, c, 2);
+          }
+      }
+
+
+      //if the house to the right does not have chesterfields, no fox
+      if(r == 4)
+      {
+          if(!cellContains(t, 3, c+1, 2))
+          {
+              removeOpt(t, r, c, 1);
+          }
+      }
+
+      //if the house to the right has no horse no kools
+      if(r == 3)
+      {
+          if(!cellContains(t, 4, c+1, 2))
+          {
+              removeOpt(t, r, c, 1);
+          }
+      }
+
+      //if the house to the right has no kools, no horse
+      if(r == 4)
+      {
+          if(!cellContains(t, 3, c+1, 1))
+          {
+              removeOpt(t, r, c, 2);
+          }
+      }
+  }
+
+  if(c == 4)
+  {
+      //the rightmost house cannot be ivory
+      if(r == 0)
+      {
+          removeOpt(t, r, c, 4);
+      }
+
+      //if the house left has no fox, no chesterfields
+      if(r == 3)
+      {
+          if(!cellContains(t, 4, c-1, 1))
+          {
+              removeOpt(t, r, c, 2);
+          }
+      }
+
+      //if the house left has no chesterfields, no fox
+      if(r == 4)
+      {
+          if(!cellContains(t, 3, c-1, 2))
+          {
+              removeOpt(t, r, c, 1);
+          }
+      }
+
+      //if the house to the left has no horse no kools
+      if(r == 3)
+      {
+          if(!cellContains(t, 4, c-1, 2))
+          {
+              removeOpt(t, r, c, 1);
+          }
+      }
+
+      //if the house to the left has no kools, no horse
+      if(r == 4)
+      {
+          if(!cellContains(t, 3, c-1, 1))
+          {
+              removeOpt(t, r, c, 2);
+          }
+      }
+
+            //if the house to the left isn't blue, not norwegian
+      if(r==1)
+      {
+          if(!cellContains(t, 0, c-1, 2))
+          {
+              removeOpt(t, r, c, 1);
+          }
+      }
+
+      //if the house to the left isn't norwegian, not blue
+      if(r==0)
+      {
+          if(!cellContains(t, 1, c-1, 1))
+          {
+              removeOpt(t, r, c, 2);
+          }
+      }
+  }
+
+  //non boundaries
+  if(c < 4 && c > 0)
+  {
+      if(r == 0) //color
+      {
+          //if house to left isnt ivory, not green
+          if(!cellContains(t, r, c-1, 4))
+          {
+              removeOpt(t, r, c, 5);
+          }
+          //if the house to the right isn't green, not ivory
+          if(!cellContains(t, r, c+1, 5))
+          {
+              removeOpt(t, r, c, 4);
+          }
+
+          //if the next house isn't norwegian, not blue
+          if(!cellContains(t, 1, c-1, 1) && !cellContains(t, 1, c+1, 1))
+          {
+              removeOpt(t, r, c, 2);
+          }
+
+      }
+
+      if(r==1)
+      {
+          //if the next house isnt blue, not norwegian
+          if(!cellContains(t, 0, c-1, 2) && !cellContains(t, 2, c+1, 1))
+          {
+              removeOpt(t, r, c, 1);
+          }
+      }
+
+
+
+      if(r==3) // smokes
+      {
+          //if the house next has no fox, no chesterfields
+          if(!cellContains(t, 4, c-1, 1) && !cellContains(t, 4, c+1, 1))
+          {
+              removeOpt(t, r, c, 2);
+          }
+
+                    //if the house next has no horse, no kools
+          if(!cellContains(t, 4, c-1, 2) && !cellContains(t, 4, c+1, 2))
+          {
+              removeOpt(t, r, c, 1);
+          }
+      }
+
+      if(r==4) //pet
+      {
+          //if the house next has no chester, no fox
+          if(!cellContains(t, 3, c-1, 2) && !cellContains(t, 3, c+1, 2))
+          {
+              removeOpt(t, r, c, 1);
+          }
+
+          //if the house next has no kools no horse
+          if(!cellContains(t, 3, c-1, 1) && !cellContains(t, 3, c+1, 1))
+          {
+              removeOpt(t, r, c, 2);
+          }
+      }
+  }
+
+//code the logical positives, ie. chooosing
+
+  //if house is red choose eng
+
+  if(r==0) //color
+  {
+  }
+
+  if(r==1) //nat
+  {
+  }
+
+  if(r==2) //drink
+  {
+  }
+
+  if(r==3) //smoke
+  {
+  }
+
+  if(r==4) //pet
+  {
+  }
+
 }
 
 void reduceTbl(vector<int> t[5][5])
 {
     //use axioms to reduce possibilities in table, keep track of boundaries, prevent segfaults
+    int a, b;
+    for(a=0; a<5; a++)
+    {
+        for(b=0; b<5; b++)
+        {
+            reduceSpot(t, a, b);
+        }
+    }
 }
 
 int constrainedRow(vector<int> t[5][5]) //return the row of the most constrained cell
@@ -256,16 +506,7 @@ int solution(vector<int> t[5][5]) // returns 1 if the solution is found, ie all 
     return 1;
 }
 
-void chooseOpt(vector<int> t[5][5], int r, int c, int opt)
-{
-    int i;
-    int size = t[r][c].size();
-    for(i=0; i<size; i++)
-    {
-        t[r][c].pop_back();
-    }
-    t[r][c].push_back(opt);
-}
+
 
 int solve(vector<int> t[5][5], int r, int c) //solve the puzzle
 {
@@ -315,9 +556,7 @@ int main()
         }
     }
 
-    removeOpt(table, 3,4, 5);
-    reduceSpot(table, 3,4);
-
+    reduceTbl(table);
     printTbl(table);
 
 
