@@ -41,24 +41,6 @@ int cellContainsOnly(vector<int> t[5][5], int r, int c, int opt) //if cell conta
     return 0;
 }
 
-void chooseOpt(vector<int> t[5][5], int r, int c, int opt)
-{
-    if(cellContains(t, r, c, opt))
-    {
-    int i;
-    int size = t[r][c].size();
-    for(i=0; i<size; i++)
-    {
-        t[r][c].pop_back();
-    }
-    t[r][c].push_back(opt);
-
-    //remove option from all other cells
-
-    }
-
-}
-
 void removeOpt(vector<int> t[5][5], int r, int c, int opt) //remove a possibility from the given cell
 {
   int a; int index;
@@ -72,6 +54,36 @@ void removeOpt(vector<int> t[5][5], int r, int c, int opt) //remove a possibilit
   t[r][c].erase(t[r][c].begin()+index);
   }
 }
+
+void chooseOpt(vector<int> t[5][5], int r, int c, int opt)
+{
+    if(cellContains(t, r, c, opt))
+    {
+    int i;
+    int size = t[r][c].size();
+    for(i=0; i<size; i++)
+    {
+        t[r][c].pop_back();
+    }
+    t[r][c].push_back(opt);
+
+    //remove option from all other cells
+    int a; int b;
+    for(a=0; a<5; a++)
+    {
+        for(b=0; b<5; b++)
+        {
+            if(a != r && b!= c)
+            {
+                removeOpt(t, a, b, opt);
+            }
+        }
+    }
+
+    }
+
+}
+
 
 
 
@@ -421,6 +433,20 @@ void reduceSpot(vector<int> t[5][5], int r, int c) //use the axioms to reduce th
       {
           chooseOpt(t, 1, c, 3);
       }
+
+      //if green, coffee
+      if(cellContainsOnly(t, r, c, 5))
+      {
+          chooseOpt(t, 2, c, 5);
+      }
+
+      //if yellow, kools
+      if(cellContainsOnly(t, r, c, 1))
+      {
+          chooseOpt(t, 3, c, 1);
+      }
+
+
   }
 
   if(r==1) //nat
@@ -430,18 +456,72 @@ void reduceSpot(vector<int> t[5][5], int r, int c) //use the axioms to reduce th
       {
           chooseOpt(t, 0, c, 3);
       }
+
+      //if span, dog
+      if(cellContainsOnly(t, r, c, 4))
+      {
+          chooseOpt(t, 4, c, 4);
+      }
+
+      //if u, then tea
+      if(cellContainsOnly(t, r, c, 2))
+      {
+          chooseOpt(t, 2, c, 2);
+      }
+
   }
 
   if(r==2) //drink
   {
+      //if coffee, green
+      if(cellContainsOnly(t, r, c, 5))
+      {
+          chooseOpt(t,0, c, 5);
+      }
+      //if t, then u
+      if(cellContainsOnly(t, r, c, 2))
+      {
+          chooseOpt(t, 1, c, 2);
+      }
+      //oj then lucky strike
+      if(cellContainsOnly(t, r, c, 4))
+      {
+          chooseOpt(t, 3, c, 4);
+      }
   }
 
   if(r==3) //smoke
   {
+      //if old gold, snails
+      if(cellContainsOnly(t, r, c,3))
+      {
+          chooseOpt(t, 4, c, 3);
+      }
+      //if kools, yellow
+      if(cellContainsOnly(t, r, c, 1))
+      {
+          chooseOpt(t, 0, c, 1);
+      }
+
+      //lucky ten oj
+      if(cellContainsOnly(t, r, c, 4))
+      {
+          chooseOpt(t, 2, c, 4);
+      }
   }
 
   if(r==4) //pet
   {
+      //if dog, span
+      if(cellContainsOnly(t, r, c, 4))
+      {
+          chooseOpt(t, 1, c, 4);
+      }
+      //if snails, old gold
+      if(cellContainsOnly(t, r, c,3))
+      {
+          chooseOpt(t, 3, c, 3);
+      }
   }
 
 }
@@ -578,8 +658,14 @@ int main()
             }
         }
     }
+    chooseOpt(table, 2, 2, 3);
 
+
+    //test
+    chooseOpt(table, 2, 3, 4);
     reduceTbl(table);
+
+    //print test
     printTbl(table);
 
 
