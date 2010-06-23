@@ -85,8 +85,6 @@ void chooseOpt(vector<int> t[5][5], int r, int c, int opt)
 }
 
 
-
-
 void reduceSpot(vector<int> t[5][5], int r, int c) //use the axioms to reduce the possibilites in a spot, based on the given state
 {
     //code the contrapositives
@@ -468,7 +466,11 @@ void reduceSpot(vector<int> t[5][5], int r, int c) //use the axioms to reduce th
       {
           chooseOpt(t, 2, c, 2);
       }
-
+      //jap then parliaments
+      if(cellContainsOnly(t, r, c, 5))
+      {
+          chooseOpt(t, 3, c, 5);
+      }
   }
 
   if(r==2) //drink
@@ -508,6 +510,12 @@ void reduceSpot(vector<int> t[5][5], int r, int c) //use the axioms to reduce th
       {
           chooseOpt(t, 2, c, 4);
       }
+
+      //parliaments then japanese
+      if(cellContainsOnly(t, r, c, 5))
+      {
+          chooseOpt(t, 1, c, 5);
+      }
   }
 
   if(r==4) //pet
@@ -523,6 +531,140 @@ void reduceSpot(vector<int> t[5][5], int r, int c) //use the axioms to reduce th
           chooseOpt(t, 3, c, 3);
       }
   }
+
+  //neighbour axioms
+
+  //left
+  if(c == 0)
+  {
+      //if the house to the right is green, ivory
+      if(r==0)
+      {
+        if(cellContainsOnly(t, 0, c+1, 5))
+        {
+            chooseOpt(t, 0, c, 4);
+        }
+
+      }
+      //if right fox, chester
+      if(r==3)
+      {
+          if(cellContainsOnly(t, 4, c+1, 1))
+          {
+              chooseOpt(t, r, c, 2);
+          }
+          //right horse, kools
+          if(cellContainsOnly(t, 4, c+1, 2))
+          {
+              chooseOpt(t, r, c, 1);
+          }
+      }
+
+      //if right chester, fox
+      if(r==4)
+      {
+          if(cellContainsOnly(t, 3, c+1, 2))
+          {
+              chooseOpt(t, r, c, 1);
+          }
+
+          //right kools, horse
+          if(cellContainsOnly(t, 3, c+1, 1))
+          {
+              chooseOpt(t, r, c, 2);
+          }
+      }
+  }
+
+  //right
+  if(c == 4)
+  {
+      //if the house to the left is ivory, green
+      if(r==0)
+      {
+          if(cellContainsOnly(t, 0, c-1, 4))
+          {
+              chooseOpt(t, 0, c, 5);
+          }
+      }
+
+      //if left fox, chester
+      if(r==3)
+      {
+          if(cellContainsOnly(t, 4, c-1, 1))
+          {
+              chooseOpt(t, r, c, 2);
+          }
+
+          //left horse, kools
+          if(cellContainsOnly(t, 4, c-1, 2))
+          {
+              chooseOpt(t, r, c, 1);
+          }
+      }
+
+      //if left chester, fox
+      if(r==4)
+      {
+          if(cellContainsOnly(t, 3, c-1, 2))
+          {
+              chooseOpt(t, r, c, 1);
+          }
+
+
+      //left kools, horse
+          if(cellContainsOnly(t, 3, c-1, 1))
+          {
+              chooseOpt(t, r, c, 2);
+          }
+      }
+  }
+
+  //non boundary
+  if(c>0 && c<4)
+  {
+
+      if(r==0)
+      {   //green ivory
+          if(cellContainsOnly(t, 0, c-1, 4))
+          {
+              chooseOpt(t, 0, c, 5);
+          }
+          if(cellContainsOnly(t, 0, c+1, 5))
+          {
+            chooseOpt(t, 0, c, 4);
+          }
+      }
+
+      if(r==3)
+      {   //fox then chester
+          if(cellContainsOnly(t, 4, c-1, 1) || cellContainsOnly(t, 4, c+1, 1))
+          {
+              chooseOpt(t, r, c, 2);
+          }
+          //horse then kools
+          if(cellContainsOnly(t, 4, c-1, 2) || cellContainsOnly(t, 4, c+1, 2))
+          {
+              chooseOpt(t, r, c, 1);
+          }
+      }
+
+      if(r==4)
+      {
+          //chester then fox
+          if(cellContainsOnly(t, 3, c-1, 2) || cellContainsOnly(t, 3, c+1, 2))
+          {
+              chooseOpt(t, r, c, 1);
+          }
+
+          //kools then horse
+          if(cellContainsOnly(t, 3, c-1, 1) || cellContainsOnly(t, 3, c+1, 1))
+          {
+              chooseOpt(t, r, c, 12);
+          }
+      }
+  }
+
 
 }
 
@@ -617,22 +759,18 @@ int solve(vector<int> t[5][5], int r, int c) //solve the puzzle
 
     if(solution(t)) {return 1;}
 
-    /*
-    for all possibilties of each cell
-
-        erase all but that option
-        reducetbl();
-
-        if(solve(reducedtbl), constrainedRow(table), constrainedCol(table))
+    int a;
+    for(a = 0; a< t[r][c].size(); a++)
+       {
+        chooseOpt(t, r, c, a);
+        reduceTbl(t);
+        if(solve(t, constrainedRow(t), constrainedCol(t)))
         {
-        print tbl;
+        printTbl(t);
         return 1;
         }
-    end for
-
+       }
     return 0;
-
-    */
 }
 
 int main()
@@ -659,10 +797,10 @@ int main()
         }
     }
     chooseOpt(table, 2, 2, 3);
-
+    chooseOpt(table, 0, 1, 2);
 
     //test
-    chooseOpt(table, 2, 3, 4);
+   // chooseOpt(table, 0, 4, 5);
     reduceTbl(table);
 
     //print test
