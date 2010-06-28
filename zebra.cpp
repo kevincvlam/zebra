@@ -7,7 +7,7 @@ using namespace std;
 void printTbl(vector<int> t[5][5]) //print the table with all the possibilities
 {
 
-    printf("-1-|-2-|-3-|-4-|-5-|\n");
+    printf("\n1-|-2-|-3-|-4-|-5-|\n");
     int d,e,f;
     for(d = 0; d < 5; d++)
     {
@@ -15,7 +15,135 @@ void printTbl(vector<int> t[5][5]) //print the table with all the possibilities
         {
             for(f=0; f < t[d][e].size(); f++)
             {
-                printf("%d", t[d][e][f]);
+                    /* Legend:
+                    1  2  3  4  5
+                    Y  B  R  I  G
+                    N  U  E  S  J
+                    W  T  M  O  C
+                    K  C  O  L  P
+                    F  H  S  D  Z
+                    */
+                //convert to letters
+                if(d==0) //color
+                {
+                    if(t[d][e][f] == 1)
+                    {
+                        printf("Y");
+                    }
+                    else if(t[d][e][f] == 2)
+                    {
+                        printf("B");
+                    }
+                    else if(t[d][e][f] == 3)
+                    {
+                        printf("R");
+                    }
+                    else if(t[d][e][f] == 4)
+                    {
+                        printf("I");
+                    }
+                    else if(t[d][e][f] == 5)
+                    {
+                        printf("G");
+                    }
+                }
+
+                else if(d==1) // nationality
+                {
+                    if(t[d][e][f] == 1)
+                    {
+                        printf("N");
+                    }
+                    else if(t[d][e][f] == 2)
+                    {
+                        printf("U");
+                    }
+                    else if(t[d][e][f] == 3)
+                    {
+                        printf("E");
+                    }
+                    else if(t[d][e][f] == 4)
+                    {
+                        printf("S");
+                    }
+                    else if(t[d][e][f] == 5)
+                    {
+                        printf("J");
+                    }
+                }
+
+                else if(d==2)
+                {
+                    if(t[d][e][f] == 1)
+                    {
+                        printf("W");
+                    }
+                    else if(t[d][e][f] == 2)
+                    {
+                        printf("T");
+                    }
+                    else if(t[d][e][f] == 3)
+                    {
+                        printf("M");
+                    }
+                    else if(t[d][e][f] == 4)
+                    {
+                        printf("O");
+                    }
+                    else if(t[d][e][f] == 5)
+                    {
+                        printf("C");
+                    }
+                }
+
+                else if(d==3)
+                {
+                    if(t[d][e][f] == 1)
+                    {
+                        printf("K");
+                    }
+                    else if(t[d][e][f] == 2)
+                    {
+                        printf("C");
+                    }
+                    else if(t[d][e][f] == 3)
+                    {
+                        printf("O");
+                    }
+                    else if(t[d][e][f] == 4)
+                    {
+                        printf("L");
+                    }
+                    else if(t[d][e][f] == 5)
+                    {
+                        printf("P");
+                    }
+                }
+
+                else if(d==4)
+                {
+                    if(t[d][e][f] == 1)
+                    {
+                        printf("F");
+                    }
+                    else if(t[d][e][f] == 2)
+                    {
+                        printf("H");
+                    }
+                    else if(t[d][e][f] == 3)
+                    {
+                        printf("S");
+                    }
+                    else if(t[d][e][f] == 4)
+                    {
+                        printf("D");
+                    }
+                    else if(t[d][e][f] == 5)
+                    {
+                        printf("Z");
+                    }
+                }
+
             }
             printf(" | ");
         }
@@ -871,14 +999,17 @@ int main()
             }
         }
     }
-    chooseOpt(table, 2, 2, 3);
-    chooseOpt(table, 0, 1, 2);
-    chooseOpt(table, 1, 0, 1);
 
     printf("Initial Table");
     printTbl(table);
     printf("\n");
 
+    //simple axioms
+    chooseOpt(table, 2, 2, 3);
+    chooseOpt(table, 0, 1, 2);
+    chooseOpt(table, 1, 0, 1);
+
+    //solve
     solve(table, constrainedRow(table), constrainedCol(table));
     printf("\n");
 
